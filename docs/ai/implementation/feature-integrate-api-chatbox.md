@@ -38,12 +38,17 @@ Successfully integrated real-time API communication into the chatbox component, 
 
 ### 4. ChatBox Component Updates (`src/components/ChatBox.tsx`)
 
-- Replaced mockup `buildAssistantReply` logic with real API calls
-- Updated message handling to use conversation hook
-- Maintained existing UI components and styling
-- Added network status monitoring
-- Enhanced error display with retry suggestions
-- Preserved image upload functionality with base64 conversion
+- Updated component to use conversation hook, replace mockup with API calls, add loading states
+- Integrated markdown rendering for assistant messages using react-markdown
+- Maintained existing UI/UX design while adding API integration
+- Added network status monitoring and error display
+
+### 5. MessageBubble Component Updates (`src/components/chat/MessageBubble.tsx`)
+
+- Added markdown rendering support using react-markdown with remark-gfm
+- Implemented conditional rendering: markdown for assistant messages, plain text for user messages
+- Added prose styling classes for consistent markdown appearance
+- Maintained existing design and functionality
 
 ## Technical Decisions
 

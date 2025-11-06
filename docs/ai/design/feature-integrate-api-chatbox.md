@@ -164,8 +164,10 @@ interface ChatResponse {
 ## Message Display
 
 - Use `assistant_message.content` for AI responses
-- Support rich text formatting if provided by API
-- Handle images and artifacts in future iterations
+- Render markdown content for assistant messages using react-markdown with remark-gfm
+- Support GitHub Flavored Markdown (tables, strikethrough, task lists, etc.)
+- Plain text rendering for user messages to preserve original input
+- Styled prose classes for consistent markdown appearance and theming
 
 # Security Considerations
 

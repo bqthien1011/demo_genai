@@ -5,6 +5,7 @@ import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { ChatLayout } from "@/components/chat/ChatLayout";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { PromptCard } from "@/components/chat/PromptCard";
+import { TypingDots } from "@/components/TypingDots";
 import {
   Carousel,
   CarouselContent,
@@ -238,10 +239,19 @@ export default function ChatBox() {
           text={msg.text}
           image={msg.image}
           isUser={msg.isUser}
+          renderMarkdown={!msg.isUser}
         />
       ))}
       {isTyping ? (
-        <MessageBubble text="AI đang nhập..." isUser={false} />
+        <div
+          className={cn(
+            "group relative max-w-[72%] rounded-3xl px-6 py-4 text-sm leading-relaxed transition-all duration-200",
+            "shadow-[0_18px_40px_-20px_rgba(32,79,150,0.35)] ring-1 ring-white/40 backdrop-blur-xl",
+            "bg-white/85 text-slate-900"
+          )}
+        >
+          <TypingDots />
+        </div>
       ) : null}
       <div ref={messagesEndRef} />
     </div>

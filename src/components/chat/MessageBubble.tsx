@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 
 export type MessageBubbleStatus = "sent" | "delivered" | "read";
@@ -12,6 +14,7 @@ export interface MessageBubbleProps {
   timestamp?: string;
   status?: MessageBubbleStatus;
   className?: string;
+  renderMarkdown?: boolean;
 }
 
 export function MessageBubble({
@@ -21,6 +24,7 @@ export function MessageBubble({
   timestamp,
   status,
   className,
+  renderMarkdown = false,
 }: MessageBubbleProps) {
   return (
     <div
@@ -33,7 +37,13 @@ export function MessageBubble({
         className
       )}
     >
-      <p className="whitespace-pre-line">{text}</p>
+      {renderMarkdown ? (
+        <div className="prose prose-sm max-w-none prose-headings:text-inherit prose-p:text-inherit prose-strong:text-inherit prose-code:text-inherit prose-pre:bg-slate-100 prose-pre:text-slate-900 prose-blockquote:border-slate-300">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+        </div>
+      ) : (
+        <p className="whitespace-pre-line">{text}</p>
+      )}
       {image ? (
         <div className="mt-3 overflow-hidden rounded-2xl border border-white/50 shadow-inner">
           <Image
