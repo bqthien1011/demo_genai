@@ -85,6 +85,7 @@ export default function ChatBox() {
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const objectUrlsRef = useRef<string[]>([]);
   const isMountedRef = useRef(false);
 
@@ -155,6 +156,14 @@ export default function ChatBox() {
       storedUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
+
+  // Auto-resize textarea based on content
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [input]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -324,12 +333,26 @@ export default function ChatBox() {
             />
           </svg>
         </button>
-        <input
-          type="text"
+        <textarea
+          ref={textareaRef}
           value={input}
           onChange={(event) => setInput(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              const form = event.currentTarget.closest("form");
+              if (form) {
+                const submitEvent = new Event("submit", {
+                  bubbles: true,
+                  cancelable: true,
+                });
+                form.dispatchEvent(submitEvent);
+              }
+            }
+          }}
           placeholder="Nhập tin nhắn..."
-          className="flex-1 bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
+          className="flex-1 bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none resize-none overflow-y-auto max-h-32 min-h-[1.5rem]"
+          rows={1}
           autoFocus
         />
         <button
