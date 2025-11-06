@@ -1,0 +1,367 @@
+"use client";
+
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+
+import { ChatLayout } from "@/components/chat/ChatLayout";
+import { MessageBubble } from "@/components/chat/MessageBubble";
+import { PromptCard } from "@/components/chat/PromptCard";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { chatTheme } from "@/lib/theme/chatbox";
+import { cn } from "@/lib/utils";
+import { useConversation } from "@/hooks/useConversation";
+
+interface Message {
+  id: string;
+  text: string;
+  isUser: boolean;
+  image?: string;
+}
+
+// API Message interface for type safety
+interface ApiMessage {
+  id: string;
+  conversation_id: string;
+  created_at: string;
+  role: "user" | "assistant";
+  content: string;
+  images: string[];
+  tool_calls: unknown[];
+  artifact?: unknown;
+  meta?: Record<string, unknown>;
+}
+
+const initialMessages: Message[] = [
+  {
+    id: "assistant-1",
+    text: "Xin chào! Mình là AI stylist của cửa hàng trang sức, mình có thể hỗ trợ bạn tìm thiết kế phù hợp trong vài bước.",
+    isUser: false,
+  },
+  {
+    id: "assistant-2",
+    text: "Bạn đang quan tâm đến kiểu trang sức nào hôm nay? Nhẫn cầu hôn, vòng cổ, hay một món quà đặc biệt?",
+    isUser: false,
+  },
+];
+
+export default function ChatBox() {
+  const [messages, setMessages] = useState<Message[]>(() => initialMessages);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
+  const [isUploadActive, setIsUploadActive] = useState(false);
+
+  // Monitor network status
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    // Set initial status
+    setIsOnline(navigator.onLine);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  // Use the conversation hook for API integration
+  const {
+    messages: apiMessages,
+    isLoading,
+    error,
+    sendUserMessage,
+    clearError,
+  } = useConversation();
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const objectUrlsRef = useRef<string[]>([]);
+  const isMountedRef = useRef(false);
+
+  const promptItems = [
+    {
+      title: "Tư vấn nhẫn kim cương",
+      description: "Chọn dáng cắt và chất liệu cho phong cách của bạn",
+      raw: "Tư vấn chọn nhẫn kim cương phù hợp với phong cách cá nhân",
+    },
+    {
+      title: "Quà tặng sinh nhật",
+      description: "Gợi ý trang sức cho từng nhóm tuổi và cá tính",
+      raw: "Đề xuất quà tặng trang sức cho dịp sinh nhật",
+    },
+    {
+      title: "Trang sức cưới",
+      description: "Hoàn thiện look cưới với vòng cổ và khuyên tai",
+      raw: "Gợi ý bộ trang sức cưới đồng bộ với váy",
+    },
+    {
+      title: "Chăm sóc đá quý",
+      description: "Bí quyết bảo quản để đá luôn sáng đẹp",
+      raw: "Hướng dẫn vệ sinh và bảo quản trang sức đá quý tại nhà",
+    },
+  ];
+
+  // Sync API messages with display messages
+  useEffect(() => {
+    if (apiMessages.length > 0) {
+      // Convert API messages to display format
+      const displayMessages: Message[] = apiMessages.map(
+        (apiMsg: ApiMessage) => ({
+          id: apiMsg.id,
+          text: apiMsg.content,
+          isUser: apiMsg.role === "user",
+          image: apiMsg.images.length > 0 ? apiMsg.images[0] : undefined,
+        })
+      );
+
+      // Replace initial messages with API messages when we have them
+      setMessages(displayMessages);
+    }
+  }, [apiMessages]);
+
+  // Show loading state
+  useEffect(() => {
+    setIsTyping(isLoading);
+  }, [isLoading]);
+
+  // Handle errors
+  useEffect(() => {
+    if (error) {
+      // Add error message to chat with retry option
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        text: `${error}\n\n_Try sending your message again._`,
+        isUser: false,
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    const storedUrls = objectUrlsRef.current;
+    return () => {
+      isMountedRef.current = false;
+      storedUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmed = input.trim();
+    if (!trimmed) return;
+
+    setInput("");
+
+    // Clear any previous errors
+    clearError();
+
+    try {
+      // Send message via API
+      await sendUserMessage(trimmed);
+
+      // The hook will handle updating messages, so we don't need to do it here
+      // The messages will be updated through the hook's state
+    } catch (err) {
+      console.error("Failed to send message:", err);
+      // Error handling is done in the hook
+    }
+  };
+
+  const handlePromptClick = async (prompt: string) => {
+    try {
+      clearError();
+      await sendUserMessage(prompt);
+    } catch (err) {
+      console.error("Failed to send prompt:", err);
+      // Error handling is done in the hook
+    }
+  };
+
+  const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Convert file to base64 for API
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Image = reader.result as string;
+
+      try {
+        clearError();
+        await sendUserMessage(
+          input || "Mình gửi mẫu trang sức này để bạn tham khảo",
+          [base64Image]
+        );
+        setInput("");
+      } catch (err) {
+        console.error("Failed to send image:", err);
+        // Error handling is done in the hook
+      }
+    };
+    reader.readAsDataURL(file);
+
+    event.target.value = "";
+  };
+
+  const handleUploadClick = () => {
+    setIsUploadActive(true);
+    fileInputRef.current?.click();
+
+    setTimeout(() => {
+      if (!isMountedRef.current) {
+        return;
+      }
+      setIsUploadActive(false);
+    }, 500);
+  };
+
+  const messagesView = (
+    <div
+      className={cn(
+        "flex h-full flex-col gap-5 overflow-y-auto px-6 py-8",
+        "scrollbar-thin scrollbar-thumb-slate-300/60 scrollbar-track-transparent"
+      )}
+    >
+      {messages.map((msg) => (
+        <MessageBubble
+          key={msg.id}
+          text={msg.text}
+          image={msg.image}
+          isUser={msg.isUser}
+        />
+      ))}
+      {isTyping ? (
+        <MessageBubble text="AI đang nhập..." isUser={false} />
+      ) : null}
+      <div ref={messagesEndRef} />
+    </div>
+  );
+
+  const promptsView = (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+          Prompt suggestions
+        </h2>
+        <span className="text-xs text-slate-400">
+          Chọn nhanh để bắt đầu trò chuyện
+        </span>
+      </div>
+      <Carousel opts={{ align: "start" }} className="w-full">
+        <CarouselContent>
+          {promptItems.map((item) => (
+            <CarouselItem key={item.raw} className="md:basis-1/2 lg:basis-1/3">
+              <div className="p-1">
+                <PromptCard
+                  title={item.title}
+                  description={item.description}
+                  onSelect={() => handlePromptClick(item.raw)}
+                />
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="shadow-lg" />
+        <CarouselNext className="shadow-lg" />
+      </Carousel>
+    </div>
+  );
+
+  const composerView = (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <div
+        className={cn(
+          chatTheme.glassPanel,
+          "flex items-center gap-3 rounded-full px-4 py-2"
+        )}
+      >
+        <button
+          type="button"
+          onClick={handleUploadClick}
+          className={cn(
+            "relative flex h-10 w-10 items-center justify-center rounded-full transition",
+            "bg-slate-100/80 text-slate-600 hover:bg-slate-200/90",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2 focus-visible:ring-offset-white/60",
+            isUploadActive ? "scale-95" : "active:scale-95"
+          )}
+          aria-label="Tải ảnh lên"
+        >
+          {isUploadActive ? (
+            <span className="pointer-events-none absolute inset-0 rounded-full bg-slate-300/60 opacity-80 animate-[ping_0.6s_ease-out]" />
+          ) : null}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 16V8a2 2 0 012-2h12a2 2 0 012 2v8M4 16l4-4a2 2 0 012.828 0l2.344 2.344a2 2 0 002.828 0L20 10M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"
+            />
+          </svg>
+        </button>
+        <input
+          type="text"
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          placeholder="Nhập tin nhắn..."
+          className="flex-1 bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
+          autoFocus
+        />
+        <button
+          type="submit"
+          className={cn(
+            chatTheme.accentButton,
+            chatTheme.accentButtonHover,
+            "flex h-10 w-10 items-center justify-center rounded-full shadow-lg transition"
+          )}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-5 w-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 12h14M12 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        ref={fileInputRef}
+        className="hidden"
+      />
+    </form>
+  );
+
+  return (
+    <ChatLayout
+      className="h-screen"
+      messages={messagesView}
+      prompts={promptsView}
+      composer={composerView}
+    />
+  );
+}
