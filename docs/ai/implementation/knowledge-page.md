@@ -48,7 +48,22 @@ The jewelry design MVP follows a progressive enhancement flow:
   - Diamond stone selection → displays `Gemini_Generated_Image_7uj7ao7uj7ao7uj7.png`
 - **Preview**: Real-time image updates with selected options
 
-### 6. Preorder Process
+### 6. Virtual Try-On Feature
+
+- **Location**: Integrated within CustomizationView component
+- **Trigger**: "Thử trên tay" button below customized product image
+- **Implementation**: Expandable section with file upload for hand images
+- **API Integration**: Calls `http://localhost:3001/api/gemini/virtual-try-on` with:
+  - `modelBase64`: Hand image converted to base64
+  - `clothingBase64`: Current customized product image in base64
+  - `dropPosition`: Fixed coordinates {x: 250, y: 180}
+  - `skinTonePrompt`: "sáng màu" (light skin tone)
+  - `cropSize`: 512px
+- **Real-time Updates**: Try-on results reset when customization options change (material/stone/color)
+- **UX Flow**: Upload hand image → Click "Thử sản phẩm" → Display AI-generated try-on result
+- **Error Handling**: File validation (image type, 5MB limit), API error display
+
+### 7. Preorder Process
 
 - **Transition**: User proceeds to preorder page with selected/customized product via dedicated button
 - **Image Persistence**: Customized images are saved to context and displayed on preorder page
@@ -71,6 +86,8 @@ The page uses a simple flex layout divided into two equal-width sections:
 - `ProductList`: Product carousel with AI mode switching
 - `RobotChatbot`: Animated chatbot for AI generation prompts
 - `ChatBox`: Main conversational interface with API integration
+- `CustomizationView`: Product customization interface with material/stone/color selectors
+- `TryOnSection`: Virtual try-on feature with file upload and API integration
 
 ### State Management
 
@@ -79,6 +96,8 @@ The page relies on `ProductContext` for global state management, including:
 - Product suggestions and AI-generated products
 - Chatbot visibility and mode switching
 - Loading states and customization selections
+- Try-on mode and selected product for virtual try-on
+- Customized images persistence across navigation
 
 ## Dependencies
 

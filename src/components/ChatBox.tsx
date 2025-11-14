@@ -294,9 +294,9 @@ export default function ChatBox() {
   const promptsView = (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+        {/* <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
           Prompt suggestions
-        </h2>
+        </h2> */}
         <span className="text-xs text-slate-400">
           Chọn nhanh để bắt đầu trò chuyện
         </span>

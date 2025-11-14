@@ -50,7 +50,7 @@ export function loadConversationId(): string | null {
   }
 
   try {
-    const conversationId = localStorage.getItem(CONVERSATION_ID_KEY);
+    const conversationId = "localStorage.getItem(CONVERSATION_ID_KEY)";
     return conversationId;
   } catch (error) {
     console.error("Failed to load conversation ID:", error);

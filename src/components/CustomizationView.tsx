@@ -13,6 +13,7 @@ import { StoneSelector } from "@/components/StoneSelector";
 import { ColorSelector } from "@/components/ColorSelector";
 import { customizeProduct } from "@/lib/services/customizationService";
 import { useProductContext } from "@/lib/context/ProductContext";
+import { TryOnSection } from "@/components/TryOnSection";
 
 interface CustomizationViewProps {
   product: AIGeneratedProduct;
@@ -53,6 +54,7 @@ export function CustomizationView({
   const [currentImage, setCurrentImage] = useState<string>(
     product.regeneratedImage || product.imageUrl
   );
+  const [isTryOnMode, setTryOnMode] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -128,6 +130,23 @@ export function CustomizationView({
             </h3>
             <p className="text-gray-600">{product.aiDescription}</p>
           </div>
+
+          {/* Try On Button */}
+          <div className="flex justify-center">
+            <Button
+              onClick={() => setTryOnMode(!isTryOnMode)}
+              variant="outline"
+              className="flex items-center space-x-2 text-purple-600 border-purple-300 hover:bg-purple-50"
+            >
+              <span>🤏</span>
+              <span>{isTryOnMode ? "Ẩn thử trên tay" : "Thử trên tay"}</span>
+            </Button>
+          </div>
+
+          {/* Try On Section - Expandable */}
+          {isTryOnMode && (
+            <TryOnSection product={product} currentImage={currentImage} />
+          )}
         </div>
 
         {/* Customization Options */}

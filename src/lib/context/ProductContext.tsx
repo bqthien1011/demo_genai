@@ -43,6 +43,10 @@ interface ProductContextType {
   setSelectedCustomization: (selection: CustomizationSelection | null) => void;
   customizedImages: Map<string, string>;
   setCustomizedImage: (productId: string, imageUrl: string) => void;
+  isTryOnMode: boolean;
+  setTryOnMode: (mode: boolean) => void;
+  selectedProductForTryOn: AIGeneratedProduct | null;
+  setSelectedProductForTryOn: (product: AIGeneratedProduct | null) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -67,6 +71,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     },
     []
   );
+  const [isTryOnMode, setTryOnMode] = useState(false);
+  const [selectedProductForTryOn, setSelectedProductForTryOn] =
+    useState<AIGeneratedProduct | null>(null);
   const [chatbot, setChatbot] = useState<ChatbotState>({
     isVisible: false,
     isCollapsed: false,
@@ -113,6 +120,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         setSelectedCustomization,
         customizedImages,
         setCustomizedImage,
+        isTryOnMode,
+        setTryOnMode,
+        selectedProductForTryOn,
+        setSelectedProductForTryOn,
       }}
     >
       {children}
