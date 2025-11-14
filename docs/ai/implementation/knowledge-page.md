@@ -43,6 +43,9 @@ The jewelry design MVP follows a progressive enhancement flow:
 - **Selection**: User selects AI-generated product for customization
 - **Options**: Modify material (gold karat), stone type, color variations
 - **Regeneration**: AI creates new images based on customization selections
+- **Dynamic Images**:
+  - Ruby stone selection → displays `Gemini_Generated_Image_r6p3hcr6p3hcr6p3.png`
+  - Diamond stone selection → displays `Gemini_Generated_Image_7uj7ao7uj7ao7uj7.png`
 - **Preview**: Real-time image updates with selected options
 
 ### 6. Preorder Process
@@ -161,7 +164,7 @@ page.tsx
 **Depth**: 3 levels  
 **Files Touched**: 15+ components, hooks, services, and types  
 **Key Entry Points**: page.tsx, ProductList.tsx, ChatBox.tsx, useConversation.ts, CustomizationView.tsx
-**Recent Updates**: Added preorder button integration, implemented product suggestion parsing from chat API
+**Recent Updates**: Added preorder button integration, implemented product suggestion parsing from chat API, added dynamic image selection based on stone type in customization
 
 ## Next Steps
 

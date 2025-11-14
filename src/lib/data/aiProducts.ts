@@ -35,7 +35,7 @@ export const aiProducts: AIGeneratedProduct[] = [
   },
   {
     id: "ai-3",
-    name: "Custom AI-Generated Jewelry Design 2",
+    name: "Custom AI-Generated Jewelry Design 3",
     image: "/Gemini_Generated_Image_7uj7ao7uj7ao7uj7.png", // placeholder, update with actual path
     imageUrl: "/Gemini_Generated_Image_7uj7ao7uj7ao7uj7.png",
     description: "Another AI-generated custom jewelry sample",
