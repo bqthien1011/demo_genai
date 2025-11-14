@@ -8,10 +8,17 @@ import { useProductContext } from "@/lib/context/ProductContext";
 export default function PreorderPage() {
   const params = useParams();
   const productId = params.productId as string;
-  const { aiProducts } = useProductContext();
+  const { aiProducts, customizedImages } = useProductContext();
 
   // Find product directly from context
   const product = aiProducts.find((p) => p.id === productId);
+
+  // Get customized image if available
+  const displayImage =
+    customizedImages.get(productId) ||
+    product?.imageUrl ||
+    product?.image ||
+    "/placeholder.svg";
 
   // Form state
   const [quantity, setQuantity] = useState(1);
@@ -552,7 +559,7 @@ export default function PreorderPage() {
                 <div className="flex justify-center">
                   <div className="relative w-full max-w-sm h-48 sm:h-64 bg-white rounded-lg overflow-hidden shadow-md">
                     <Image
-                      src={product.imageUrl || product.image}
+                      src={displayImage}
                       alt={product.name}
                       fill
                       className="object-cover"

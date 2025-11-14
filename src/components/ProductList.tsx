@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -125,6 +126,7 @@ export default function ProductList() {
     selectedCustomization,
     setSelectedCustomization,
   } = useProductContext();
+  const router = useRouter();
   const [api, setApi] = useState<CarouselApi>();
   const [hasTriggeredChatbot, setHasTriggeredChatbot] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -280,7 +282,7 @@ export default function ProductList() {
                             </Button>
                             <Button
                               onClick={() =>
-                                (window.location.href = `/preorder/${product.id}`)
+                                router.push(`/preorder/${product.id}`)
                               }
                               variant="outline"
                               className="border-purple-600 text-purple-600 hover:bg-purple-50"

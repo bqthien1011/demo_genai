@@ -51,6 +51,8 @@ The jewelry design MVP follows a progressive enhancement flow:
 ### 6. Preorder Process
 
 - **Transition**: User proceeds to preorder page with selected/customized product via dedicated button
+- **Image Persistence**: Customized images are saved to context and displayed on preorder page
+- **Implementation**: `setCustomizedImage()` stores current image before navigation, preorder page retrieves via `customizedImages.get(productId)`
 - **Details**: Customer information, shipping, payment method selection
 - **Completion**: Order submission with confirmation
 
@@ -164,7 +166,7 @@ page.tsx
 **Depth**: 3 levels  
 **Files Touched**: 15+ components, hooks, services, and types  
 **Key Entry Points**: page.tsx, ProductList.tsx, ChatBox.tsx, useConversation.ts, CustomizationView.tsx
-**Recent Updates**: Added preorder button integration, implemented product suggestion parsing from chat API, added dynamic image selection based on stone type in customization
+**Recent Updates**: Added preorder button integration, implemented product suggestion parsing from chat API, added dynamic image selection based on stone type in customization, implemented customized image persistence across preorder flow
 
 ## Next Steps
 

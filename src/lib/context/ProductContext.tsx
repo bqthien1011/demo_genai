@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+} from "react";
 import {
   Product,
   AIGeneratedProduct,
@@ -35,6 +41,8 @@ interface ProductContextType {
   setCustomizationOptions: (options: CustomizationOptions | null) => void;
   selectedCustomization: CustomizationSelection | null;
   setSelectedCustomization: (selection: CustomizationSelection | null) => void;
+  customizedImages: Map<string, string>;
+  setCustomizedImage: (productId: string, imageUrl: string) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -49,6 +57,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     useState<CustomizationOptions | null>(null);
   const [selectedCustomization, setSelectedCustomization] =
     useState<CustomizationSelection | null>(null);
+  const [customizedImages, setCustomizedImages] = useState<Map<string, string>>(
+    new Map()
+  );
+
+  const setCustomizedImage = useCallback(
+    (productId: string, imageUrl: string) => {
+      setCustomizedImages((prev) => new Map(prev.set(productId, imageUrl)));
+    },
+    []
+  );
   const [chatbot, setChatbot] = useState<ChatbotState>({
     isVisible: false,
     isCollapsed: false,
@@ -93,6 +111,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         setCustomizationOptions,
         selectedCustomization,
         setSelectedCustomization,
+        customizedImages,
+        setCustomizedImage,
       }}
     >
       {children}

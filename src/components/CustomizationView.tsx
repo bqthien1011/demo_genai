@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,8 +44,12 @@ export function CustomizationView({
   onBack,
   onCustomize,
 }: CustomizationViewProps) {
-  const { selectedCustomization, setSelectedCustomization } =
-    useProductContext();
+  const {
+    selectedCustomization,
+    setSelectedCustomization,
+    setCustomizedImage,
+  } = useProductContext();
+  const router = useRouter();
   const [currentImage, setCurrentImage] = useState<string>(
     product.regeneratedImage || product.imageUrl
   );
@@ -157,7 +162,11 @@ export function CustomizationView({
             </Button>
 
             <Button
-              onClick={() => (window.location.href = `/preorder/${product.id}`)}
+              onClick={() => {
+                // Save the customized image before navigating to preorder
+                setCustomizedImage(product.id, currentImage);
+                router.push(`/preorder/${product.id}`);
+              }}
               variant="outline"
               className="w-full border-purple-600 text-purple-600 hover:bg-purple-50 py-3 px-4 rounded-lg font-medium"
             >
