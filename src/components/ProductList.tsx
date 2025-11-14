@@ -25,37 +25,93 @@ interface StaticProduct {
 
 const staticProducts: StaticProduct[] = [
   {
-    id: "1",
-    name: "Bộ trang sức Kim cương Vàng 14K PNJ 00001-00001",
+    id: "GNXMXMW005914",
+    name: "Nhẫn Vàng trắng 14K đính đá ECZ PNJ Audax Rosa XMXMW005914",
     image:
-      "https://cdn.pnj.io/images/thumbnails/485/485/detailed/269/sp-gndd00w006244-nhan-kim-cuong-vang-trang-14k-pnj-my-first-diamond-1.png",
-    price: 2290574000,
-    sold: 2,
+      "https://cdn.pnj.io/images/detailed/237/sp-gnxmxmw005914-nhan-vang-trang-14k-dinh-da-ecz-pnj-2.png",
+    price: 8500000,
+    sold: 5,
   },
   {
-    id: "2",
-    name: "Lắc tay Kim cương Vàng 14K PNJ Masterpiece DDMXH000001",
+    id: "GNXMXMW005913",
+    name: "Nhẫn Vàng trắng 14K đính đá ECZ PNJ Audax Rosa XMXMW005913",
     image:
-      "https://cdn.pnj.io/images/thumbnails/485/485/detailed/269/sp-gndd00w006244-nhan-kim-cuong-vang-trang-14k-pnj-my-first-diamond-1.png",
-    price: 661657000,
-    sold: 2,
+      "https://cdn.pnj.io/images/detailed/238/sp-gnxmxmw005913-nhan-vang-trang-14k-dinh-da-ecz-pnj-1.png",
+    price: 8200000,
+    sold: 3,
   },
   {
-    id: "3",
-    name: "Bông tai Kim cương Vàng 14K PNJ Masterpiece DDMXH000001",
+    id: "GNXMXMW005912",
+    name: "Nhẫn Vàng trắng 14K đính đá ECZ PNJ Audax Rosa XMXMW005912",
     image:
-      "https://cdn.pnj.io/images/thumbnails/485/485/detailed/269/sp-gndd00w006244-nhan-kim-cuong-vang-trang-14k-pnj-my-first-diamond-1.png",
-    price: 135400000,
-    sold: 1,
+      "https://cdn.pnj.io/images/detailed/237/sp-gnxmxmw005912-nhan-vang-trang-14k-dinh-da-ecz-pnj-1.png",
+    price: 7800000,
+    sold: 7,
   },
   {
-    id: "4",
-    name: "Dây cổ Kim cương Vàng 14K PNJ Masterpiece DDMXH000001",
+    id: "GNTPXMW000794",
+    name: "Nhẫn Vàng trắng 10K Đính đá Topaz PNJ TPXMW000794",
     image:
-      "https://cdn.pnj.io/images/thumbnails/485/485/detailed/269/sp-gndd00w006244-nhan-kim-cuong-vang-trang-14k-pnj-my-first-diamond-1.png",
-    price: 1151742000,
-    sold: 1,
+      "https://cdn.pnj.io/images/detailed/255/sp-gntpxmw000794-nhan-vang-10k-dinh-da-topaz-pnj-1.png",
+    price: 6500000,
+    sold: 4,
   },
+  // {
+  //   id: "GNSPXMW000561",
+  //   name: "Nhẫn Vàng trắng 10K Đính đá Sapphire PNJ SPXMW000561",
+  //   image:
+  //     "https://cdn.pnj.io/images/detailed/252/sp-gnspxmw000561-nhan-vang-10k-dinh-da-sapphire-pnj-1.png",
+  //   price: 7200000,
+  //   sold: 6,
+  // },
+  // {
+  //   id: "GNSPXMW000560",
+  //   name: "Nhẫn Vàng trắng 10K Đính đá Sapphire PNJ SPXMW000560",
+  //   image:
+  //     "https://cdn.pnj.io/images/detailed/261/sp-gnspxmw000560-nhan-vang-10k-dinh-da-sapphire-pnj-1.png",
+  //   price: 6800000,
+  //   sold: 2,
+  // },
+  // {
+  //   id: "GNGN00W000007",
+  //   name: "Nhẫn Vàng trắng 10K Đính đá Garnat PNJ GN00W000007",
+  //   image:
+  //     "https://cdn.pnj.io/images/detailed/252/sp-gngn00w000007-nhan-vang-10k-dinh-da-ganat-pnj-1.png",
+  //   price: 5500000,
+  //   sold: 8,
+  // },
+  // {
+  //   id: "GNDDDDW013993",
+  //   name: "Nhẫn Kim cương Vàng trắng 14K PNJ Audax Rosa DDDDW013993",
+  //   image:
+  //     "https://cdn.pnj.io/images/detailed/238/sp-gnddddw013993-nhan-kim-cuong-vang-trang-14k-pnj-1.png",
+  //   price: 18500000,
+  //   sold: 1,
+  // },
+  // {
+  //   id: "GNDDDDW013992",
+  //   name: "Nhẫn Kim cương Vàng trắng 14K PNJ Audax Rosa DDDDW013992",
+  //   image:
+  //     "https://cdn.pnj.io/images/detailed/238/sp-gnddddw013992-nhan-kim-cuong-vang-trang-14k-pnj-1.png",
+  //   price: 17200000,
+  //   sold: 3,
+  // },
+  // {
+  //   id: "GNCTXMW000108",
+  //   name: "Nhẫn Vàng trắng 10K Đính đá Citrine PNJ CTXMW000108",
+  //   image:
+  //     "https://cdn.pnj.io/images/detailed/261/sp-gnctxmw000108-nhan-vang-10k-dinh-da-citrine-pnj-1.png",
+  //   price: 5800000,
+  //   sold: 4,
+  // },
+  // {
+  //   id: "GNATXMW000084",
+  //   name: "Nhẫn Vàng trắng 10K Đính đá Amethyst PNJ ATXMW000084",
+  //   image:
+  //     "https://cdn.pnj.io/images/detailed/252/sp-gnatxmw000084-nhan-vang-10k-dinh-da-amethyst-pnj-1.png",
+  //   price: 6200000,
+  //   sold: 5,
+  // },
 ];
 
 export default function ProductList() {

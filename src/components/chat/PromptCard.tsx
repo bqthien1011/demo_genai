@@ -29,11 +29,8 @@ export function PromptCard({
       )}
       style={{ cursor: "pointer" }}
     >
-      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-        {icon ?? "💎"}
-      </span>
       <span className="text-base font-semibold leading-tight text-slate-900">
-        {title}
+        {icon ?? "💎"} {title}
       </span>
       {description ? (
         <span className="text-sm text-slate-600">{description}</span>

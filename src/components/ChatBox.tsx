@@ -96,24 +96,19 @@ export default function ChatBox() {
 
   const promptItems = [
     {
-      title: "Tư vấn nhẫn kim cương",
-      description: "Chọn dáng cắt và chất liệu cho phong cách của bạn",
-      raw: "Tư vấn chọn nhẫn kim cương phù hợp với phong cách cá nhân",
+      title: "Nhẫn kim cương",
+      description: "Nhẫn kim cương cao cấp, quà kỷ niệm",
+      raw: "Tôi đang tìm mua một chiếc nhẫn kim cương cao cấp. Tôi muốn kiểu dáng sang trọng, tinh tế, chất liệu bạch kim hoặc vàng trắng. Nhẫn gắn viên kim cương lớn, trong suốt, độ tinh khiết cao, màu sắc sáng lấp lánh. Phong cách thiết kế hiện đại nhưng vẫn giữ sự đẳng cấp. Size khoảng 16. Ngân sách của tôi không giới hạn, có thể từ vài trăm triệu đến vài tỷ đồng, miễn là sản phẩm thật sự độc đáo và xứng đáng. Mục đích là để làm quà kỷ niệm đặc biệt.",
     },
     {
       title: "Quà tặng sinh nhật",
       description: "Gợi ý trang sức cho từng nhóm tuổi và cá tính",
-      raw: "Đề xuất quà tặng trang sức cho dịp sinh nhật",
+      raw: "Tôi đang tìm mua một chiếc nhẫn thời trang làm quà sinh nhật cho bạn gái 25 tuổi. Tôi muốn kiểu dáng nhẹ nhàng, hiện đại và trẻ trung. Chất liệu có thể là bạc hoặc vàng hồng, màu sắc chủ đạo là hồng vàng hoặc bạc sáng. Nhẫn có gắn một viên đá màu nhỏ, tốt nhất là birthstone theo tháng sinh. Size khoảng 14, và ngân sách tôi dự kiến nằm trong khoảng 5 đến 7 triệu đồng.",
     },
     {
       title: "Trang sức cưới",
-      description: "Hoàn thiện look cưới với vòng cổ và khuyên tai",
-      raw: "Gợi ý bộ trang sức cưới đồng bộ với váy",
-    },
-    {
-      title: "Chăm sóc đá quý",
-      description: "Bí quyết bảo quản để đá luôn sáng đẹp",
-      raw: "Hướng dẫn vệ sinh và bảo quản trang sức đá quý tại nhà",
+      description: "Nhẫn cưới kim cương, 20-25 triệu",
+      raw: "Tôi đang tìm mua một chiếc nhẫn cưới kim cương với các yêu cầu sau đây:\n• Kiểu dáng nhẫn: Nhẫn cưới, thiết kế đơn giản nhưng tinh tế.\n• Chất liệu: Vàng trắng.\n• Đá quý/chi tiết trang trí: Có gắn một viên kim cương nhỏ ở giữa.\n• Màu sắc chủ đạo: Vàng trắng sáng.\n• Phong cách thiết kế: Sang trọng, hiện đại.\n• Kích thước/size: Size 16.\n• Ngân sách dự kiến: Khoảng 20 – 25 triệu đồng.\n• Mục đích sử dụng: Nhẫn cưới.",
     },
   ];
 
@@ -320,8 +315,8 @@ export default function ChatBox() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="shadow-lg" />
-        <CarouselNext className="shadow-lg" />
+        {/* <CarouselPrevious className="shadow-lg" />
+        <CarouselNext className="shadow-lg" /> */}
       </Carousel>
     </div>
   );
