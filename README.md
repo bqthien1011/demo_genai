@@ -2,7 +2,37 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+### Environment Setup
+
+1. Copy the environment template:
+
+```bash
+cp .env.example .env
+```
+
+2. Update the `.env` file with your actual API credentials:
+
+```env
+API_BASE_URL=http://your-api-server:8000
+ACCESS_TOKEN=your_actual_access_token
+TRY_ON_API_BASE_URL=http://your-tryon-api:3001
+```
+
+### Installation
+
+First, install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+### Development Server
+
+Then, run the development server:
 
 ```bash
 npm run dev
