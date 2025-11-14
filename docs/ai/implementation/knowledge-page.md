@@ -1,55 +1,174 @@
-# Overview
+# Knowledge: Page
 
-The `page.tsx` file serves as the main entry point for the jewelry chat interface MVP application. It is a Next.js page component written in TypeScript that renders the home screen of the app. The app is designed as a jewelry shopping interface where users can browse products and interact with an AI-powered chatbot to receive personalized product suggestions, including AI-generated jewelry designs.
+## Overview
 
-**Purpose**: To provide the primary user interface for the MVP, integrating product display, chat functionality, and animated chatbot interactions.
+The `page.tsx` file serves as the main entry point for the jewelry design MVP application. This Next.js page component implements a split-screen layout featuring product browsing on the left and an AI-powered chatbot interface on the right. The application enables users to discover existing jewelry products and generate custom AI-designed jewelry through conversational interaction.
 
-**Language**: TypeScript with React (Next.js framework).
+**Language**: TypeScript/React  
+**Framework**: Next.js 14+  
+**Key Features**: Product discovery, AI chatbot integration, AI-generated product creation, customization workflow
 
-**High-level behavior**: Upon loading, the page displays a header, a list of jewelry products on the left half, a chat box on the right half, and a floating robot chatbot that can suggest AI-generated products. The layout is responsive and uses animations to enhance user experience.
+## MVP Project Flow
 
-# Implementation Details
+The jewelry design MVP follows a progressive enhancement flow:
 
-## Core Logic
+### 1. Initial Product Discovery
 
-- The component wraps the entire UI in a `ProductProvider` context, which manages global state for products, chatbot visibility, and AI mode.
-- The layout uses Flexbox: a full-height flex column with the header at the top, and a flex row below containing the product list/chatbot on the left (50% width) and the chat box on the right (50% width).
-- No complex logic; primarily declarative rendering of child components.
+- **Entry**: User lands on the page showing recently viewed products (static jewelry items)
+- **Display**: Product carousel with images, prices, and basic info
+- **Purpose**: Familiar browsing experience to engage users
 
-## Key Components
+### 2. AI Suggestion Trigger
 
-- `Header`: Displays the app's header (likely navigation or branding).
-- `ProductList`: Renders a list of static jewelry products with images, prices, and a carousel for suggestions.
-- `ChatBox`: A chat interface for user interaction with the AI stylist, including message bubbles, prompts, and product suggestions.
-- `RobotChatbot`: An animated floating chatbot that appears at the bottom-left, offering to switch to AI mode and suggest generated products.
+- **Trigger**: After scrolling through products, animated robot chatbot appears
+- **Prompt**: Offers to switch to AI mode for custom design generation
+- **Decision**: User can accept AI suggestions or continue browsing
 
-## Execution Flow
+### 3. Conversational Product Discovery
 
-1. Page loads and renders the layout.
-2. `ProductList` displays static products.
-3. `ChatBox` initializes with welcome messages from the AI stylist.
-4. `RobotChatbot` animates in, allowing users to agree to AI suggestions or collapse it.
-5. User interactions in the chat or chatbot trigger state changes via the context.
+- **Interface**: Right panel chatbox with AI stylist
+- **Interaction**: User describes preferences, AI probes for requirements
+- **Suggestions**: AI searches and displays similar existing products via `artifact.type === "product_suggestions"`
+- **Implementation**: ChatBox component parses API response artifacts and updates `suggestedProducts` in context
+- **Fallback**: If no matches found, AI offers to generate custom designs
 
-## Patterns
+### 4. AI Product Generation
 
-- Uses "use client" directive for client-side rendering.
-- Context API for state management.
-- Tailwind CSS for styling.
-- Framer Motion for animations in child components.
+- **Generation**: AI creates 2D/3D jewelry designs based on user description
+- **Display**: Generated products shown in carousel with "AI Generated" badges
+- **Features**: Unique designs not available in static catalog
 
-## Error Handling
+### 5. Product Customization
 
-- Minimal error handling visible; relies on child components for validation (e.g., chat input).
+- **Selection**: User selects AI-generated product for customization
+- **Options**: Modify material (gold karat), stone type, color variations
+- **Regeneration**: AI creates new images based on customization selections
+- **Preview**: Real-time image updates with selected options
 
-## Performance Considerations
+### 6. Preorder Process
 
-- Next.js optimizes images and rendering.
-- Animations are lightweight using Framer Motion springs.
+- **Transition**: User proceeds to preorder page with selected/customized product via dedicated button
+- **Details**: Customer information, shipping, payment method selection
+- **Completion**: Order submission with confirmation
 
-## Security Considerations
+## Implementation Details
 
-- No sensitive data handling; client-side app with static/product data.
+### Core Structure
+
+The page uses a simple flex layout divided into two equal-width sections:
+
+- **Left Panel**: Product display and robot chatbot overlay
+- **Right Panel**: Full-height chat interface
+
+### Component Integration
+
+- `Header`: Navigation and branding
+- `ProductList`: Product carousel with AI mode switching
+- `RobotChatbot`: Animated chatbot for AI generation prompts
+- `ChatBox`: Main conversational interface with API integration
+
+### State Management
+
+The page relies on `ProductContext` for global state management, including:
+
+- Product suggestions and AI-generated products
+- Chatbot visibility and mode switching
+- Loading states and customization selections
+
+## Dependencies
+
+### Direct Imports
+
+- `Header` - Navigation component
+- `ProductList` - Product display and interaction
+- `ChatBox` - AI conversation interface
+- `RobotChatbot` - Animated chatbot overlay
+
+### Indirect Dependencies (Depth 1-3)
+
+- **UI Components**: Button, Dialog, Carousel (shadcn/ui)
+- **Context**: ProductContext for state management
+- **Hooks**: useConversation for chat API integration
+- **Services**: chatApi for backend communication
+- **Types**: Product, AIGeneratedProduct interfaces
+- **Data**: Static product data and AI product examples
+
+### External Systems
+
+- **Backend API**: Localhost:8000 for chat and product generation
+- **Image Storage**: External URLs for product images
+- **Authentication**: JWT token for API access
+
+## Visual Diagrams
+
+### Application Flow
+
+```
+User Entry → Product Carousel → Chatbot Prompt → AI Conversation
+    ↓              ↓                    ↓              ↓
+Static Products → Scroll Complete → Accept AI → Product Suggestions
+    ↓              ↓                    ↓              ↓
+AI Generation → Customization → Regenerate → Preorder
+```
+
+### Component Hierarchy
+
+```
+page.tsx
+├── Header
+├── ProductList
+│   ├── Product Cards (Static/AI)
+│   ├── CustomizationView
+│   └── RobotChatbot
+└── ChatBox
+    ├── MessageBubble
+    ├── PromptCard
+    └── TypingDots
+```
+
+## Additional Insights
+
+### Key Patterns
+
+- **Progressive Enhancement**: Starts with static products, escalates to AI generation
+- **Context-Driven UI**: Components adapt based on AI mode and product state
+- **Real-time Updates**: Chat messages and product suggestions update dynamically
+- **Error Handling**: Graceful fallbacks for API failures and image loading
+
+### Performance Considerations
+
+- Lazy loading of product images
+- Debounced chatbot triggers
+- Optimistic UI updates for chat messages
+- Context-based component rendering
+
+### Security Notes
+
+- API tokens stored in client code (development only)
+- No sensitive data in client state
+- Image URLs validated on error
+
+### Potential Improvements
+
+- Implement proper authentication flow
+- Add product caching and offline support
+- Enhance error boundaries and retry logic
+- Optimize bundle size for production
+
+## Metadata
+
+**Analysis Date**: November 13, 2025  
+**Depth**: 3 levels  
+**Files Touched**: 15+ components, hooks, services, and types  
+**Key Entry Points**: page.tsx, ProductList.tsx, ChatBox.tsx, useConversation.ts, CustomizationView.tsx
+**Recent Updates**: Added preorder button integration, implemented product suggestion parsing from chat API
+
+## Next Steps
+
+- Review `ProductList.tsx` for detailed product display logic
+- Examine `useConversation.ts` for chat API integration patterns
+- Analyze `CustomizationView.tsx` for product modification workflow
+- Investigate preorder flow in `/preorder/[productId]/page.tsx`
 
 # Dependencies
 
@@ -138,9 +257,9 @@ Potential improvements: Add more animations for message bubbles, integrate real 
 
 # Metadata
 
-- **Analysis Date**: November 6, 2025
-- **Depth**: 2 (primary file + direct dependencies)
-- **Files Touched**: page.tsx, RobotChatbot.tsx, ChatBox.tsx, ProductList.tsx, ProductContext.tsx
+- **Analysis Date**: November 13, 2025
+- **Depth**: 3 levels
+- **Files Touched**: page.tsx, RobotChatbot.tsx, ChatBox.tsx, ProductList.tsx, ProductContext.tsx, useConversation.ts, chatApi.ts, CustomizationView.tsx
 - **Entry Point Type**: File (Next.js page component)
 
 # Next Steps

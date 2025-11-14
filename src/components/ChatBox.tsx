@@ -16,6 +16,7 @@ import {
 import { chatTheme } from "@/lib/theme/chatbox";
 import { cn } from "@/lib/utils";
 import { useConversation } from "@/hooks/useConversation";
+import { useProductContext } from "@/lib/context/ProductContext";
 
 interface Message {
   id: string;
@@ -83,6 +84,10 @@ export default function ChatBox() {
     clearError,
   } = useConversation();
 
+  // Use product context for suggestions
+  const { setSuggestedProducts, setIsLoading: setProductLoading } =
+    useProductContext();
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -127,8 +132,33 @@ export default function ChatBox() {
 
       // Replace initial messages with API messages when we have them
       setMessages(displayMessages);
+
+      // Check for product suggestions in the latest assistant message
+      const latestAssistantMessage = apiMessages
+        .filter((msg) => msg.role === "assistant")
+        .slice(-1)[0];
+
+      if (latestAssistantMessage?.artifact?.type === "product_suggestions") {
+        // Parse product suggestions from artifact
+        const suggestedProducts = latestAssistantMessage.artifact.design
+          ? [latestAssistantMessage.artifact.design]
+          : [];
+        if (suggestedProducts.length > 0) {
+          setSuggestedProducts(
+            suggestedProducts.map((design) => ({
+              id: design.id,
+              name: design.name,
+              image: design.images[0] || "",
+              price: 0, // Default price, could be enhanced
+              description: design.description,
+              tags: [], // Could be parsed from properties
+              category: "suggested",
+            }))
+          );
+        }
+      }
     }
-  }, [apiMessages]);
+  }, [apiMessages, setSuggestedProducts]);
 
   // Show loading state
   useEffect(() => {

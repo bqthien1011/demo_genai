@@ -156,6 +156,14 @@ export function CustomizationView({
               {isRegenerating ? "Đang tạo..." : "Tạo lại ảnh"}
             </Button>
 
+            <Button
+              onClick={() => (window.location.href = `/preorder/${product.id}`)}
+              variant="outline"
+              className="w-full border-purple-600 text-purple-600 hover:bg-purple-50 py-3 px-4 rounded-lg font-medium"
+            >
+              Đặt trước sản phẩm
+            </Button>
+
             {error && (
               <p className="text-red-600 text-sm text-center">{error}</p>
             )}
