@@ -254,13 +254,19 @@ export function TryOnSection({ product, currentImage }: TryOnSectionProps) {
           </div>
         )}
 
+        {!handImage && (
+          <p className="text-sm text-gray-500 mb-4">
+            Vui lòng upload ảnh bàn tay để thử sản phẩm.
+          </p>
+        )}
+
         {/* Try On Button */}
         {handImage && (
           <div className="flex justify-center">
             <Button
               onClick={handleTryOn}
-              disabled={isProcessing}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2"
+              disabled={isProcessing || !handImage}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 disabled:bg-gray-400"
             >
               {isProcessing ? (
                 <div className="flex items-center space-x-2">

@@ -51,12 +51,13 @@ const initialMessages: Message[] = [
   },
 ];
 
-export default function ChatBox() {
+export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
   const [messages, setMessages] = useState<Message[]>(() => initialMessages);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [isUploadActive, setIsUploadActive] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(!minimized);
 
   // Monitor network status
   useEffect(() => {
@@ -74,6 +75,11 @@ export default function ChatBox() {
       window.removeEventListener("offline", handleOffline);
     };
   }, []);
+
+  // Update expanded state when minimized prop changes
+  useEffect(() => {
+    setIsExpanded(!minimized);
+  }, [minimized]);
 
   // Use the conversation hook for API integration
   const {
@@ -414,7 +420,30 @@ export default function ChatBox() {
     </form>
   );
 
-  return (
+  return minimized && !isExpanded ? (
+    <div className="h-screen flex items-end justify-end p-4">
+      <button
+        onClick={() => setIsExpanded(true)}
+        className="bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+        title="Expand ChatBox"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="h-6 w-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+          />
+        </svg>
+      </button>
+    </div>
+  ) : (
     <ChatLayout
       className="h-screen"
       messages={messagesView}

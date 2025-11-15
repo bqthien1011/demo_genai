@@ -115,7 +115,15 @@ const staticProducts: StaticProduct[] = [
   // },
 ];
 
-export default function ProductList() {
+export default function ProductList({
+  setIsCustomizing,
+  setSelectedProduct,
+  setChatBoxMinimized,
+}: {
+  setIsCustomizing: (value: boolean) => void;
+  setSelectedProduct: (product: AIGeneratedProduct | null) => void;
+  setChatBoxMinimized: (value: boolean) => void;
+}) {
   const {
     suggestedProducts,
     isLoading,
@@ -132,7 +140,7 @@ export default function ProductList() {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [customizationMode, setCustomizationMode] = useState(false);
-  const [selectedProduct, setSelectedProduct] =
+  const [selectedProduct, setLocalSelectedProduct] =
     useState<AIGeneratedProduct | null>(null);
 
   // Use AI products if in AI mode, otherwise suggested products, otherwise static products
@@ -147,8 +155,11 @@ export default function ProductList() {
   };
 
   const handleCustomize = (product: AIGeneratedProduct) => {
+    setLocalSelectedProduct(product);
     setSelectedProduct(product);
     setCustomizationMode(true);
+    setIsCustomizing(true);
+    setChatBoxMinimized(true);
     // Initialize customization selection if not already set
     if (!selectedCustomization) {
       setSelectedCustomization({
@@ -161,7 +172,9 @@ export default function ProductList() {
 
   const handleBackFromCustomization = () => {
     setCustomizationMode(false);
+    setLocalSelectedProduct(null);
     setSelectedProduct(null);
+    setIsCustomizing(false);
   };
 
   const handleImageClick = (productId: string) => {
