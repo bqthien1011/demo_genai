@@ -1,10 +1,9 @@
 // API service for chat functionality
-const API_BASE_URL = process.env.API_BASE_URL || "http://10.1.9.220:8000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
 
 // Access token for API authentication
-const ACCESS_TOKEN =
-  process.env.ACCESS_TOKEN ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3OGEzYTBkNy00MzRmLTRkNGItOGNmMC00Yjg1ZDNhOWUzMzAiLCJleHAiOjE3NjM2OTE4MDh9.ldiZNHlRJK7UIjNjg7CGBDluIrNVBoo0QU-PbKwCiiY";
+const ACCESS_TOKEN = process.env.NEXT_PUBLIC_ACCESS_TOKEN || "";
 
 // Types
 export interface Conversation {

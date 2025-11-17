@@ -72,7 +72,8 @@ export function TryOnSection({ product, currentImage }: TryOnSectionProps) {
 
         const response = await fetch(
           `${
-            process.env.TRY_ON_API_BASE_URL || "http://localhost:3001"
+            process.env.NEXT_PUBLIC_TRY_ON_API_BASE_URL ||
+            "http://localhost:3001"
           }/api/gemini/virtual-try-on`,
           {
             method: "POST",
