@@ -378,14 +378,8 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
     }
   };
 
-  const handlePromptClick = async (prompt: string) => {
-    try {
-      clearError();
-      await sendUserMessage(prompt);
-    } catch (err) {
-      console.error("Failed to send prompt:", err);
-      // Error handling is done in the hook
-    }
+  const handlePromptClick = (prompt: string) => {
+    setInput(prompt);
   };
 
   const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -543,7 +537,7 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
           }}
           placeholder="Nhập tin nhắn..."
           className="flex-1 bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none resize-none overflow-y-auto max-h-32 min-h-[1.5rem]"
-          rows={1}
+          rows={5}
           autoFocus
         />
         <button
