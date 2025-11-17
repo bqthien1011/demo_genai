@@ -295,7 +295,9 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
                     name: design.name || "AI Generated Design",
                     imageUrl: imageUrl,
                     image: imageUrl,
-                    price: 0,
+                    price:
+                      Math.floor(Math.random() * (100000000 - 15000000 + 1)) +
+                      15000000, // Random price 15M - 100M VND
                     description: design.description || "",
                     tags: [],
                     category: "ai-generated",
