@@ -12,7 +12,7 @@ export const aiProducts: AIGeneratedProduct[] = [
     style: "Modern",
     occasion: "Special",
     gemstones: ["Diamond"],
-    price: 0, // No price for AI samples
+    price: 8500000, // No price for AI samples
     category: "Custom",
     isAIGenerated: true,
     aiDescription: "Your described custom jewelry concept",
@@ -28,7 +28,7 @@ export const aiProducts: AIGeneratedProduct[] = [
     style: "Elegant",
     occasion: "Wedding",
     gemstones: ["Sapphire"],
-    price: 0, // No price for AI samples
+    price: 17000000, // No price for AI samples
     category: "Custom",
     isAIGenerated: true,
     aiDescription: "Your described custom jewelry concept",
@@ -44,7 +44,7 @@ export const aiProducts: AIGeneratedProduct[] = [
     style: "Elegant",
     occasion: "Wedding",
     gemstones: ["Sapphire"],
-    price: 0, // No price for AI samples
+    price: 150000000, // No price for AI samples
     category: "Custom",
     isAIGenerated: true,
     aiDescription: "Your described custom jewelry concept",
