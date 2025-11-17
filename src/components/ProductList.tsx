@@ -293,9 +293,15 @@ export default function ProductList({
                           )}
                         </div>
                         <div className="text-center">
-                          <p className="text-sm text-gray-600 mb-2">
-                            Mẫu thiết kế theo ý tưởng của bạn
-                          </p>
+                          {product.category === "recommended" ? (
+                            <h3 className="font-medium text-base mb-2 text-gray-800 leading-tight">
+                              {product.name}
+                            </h3>
+                          ) : (
+                            <p className="text-sm text-gray-600 mb-2">
+                              Mẫu thiết kế theo ý tưởng của bạn
+                            </p>
+                          )}
                           <div className="space-y-2">
                             <Button
                               onClick={() =>

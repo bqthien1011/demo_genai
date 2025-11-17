@@ -172,23 +172,76 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
         .filter((msg) => msg.role === "assistant")
         .slice(-1)[0];
 
-      if (latestAssistantMessage?.artifact?.type === "product_suggestions") {
-        // Parse product suggestions from artifact
-        const suggestedProducts = latestAssistantMessage.artifact.design
-          ? [latestAssistantMessage.artifact.design]
-          : [];
-        if (suggestedProducts.length > 0) {
-          setSuggestedProducts(
-            suggestedProducts.map((design) => ({
-              id: design.id,
-              name: design.name,
-              image: design.images[0] || "",
-              price: 0, // Default price, could be enhanced
-              description: design.description,
-              tags: [], // Could be parsed from properties
-              category: "suggested",
-            }))
-          );
+      if (latestAssistantMessage?.artifact) {
+        if (latestAssistantMessage.artifact.type === "product_suggestions") {
+          // Parse product suggestions from artifact
+          const suggestedProducts = latestAssistantMessage.artifact.design
+            ? [latestAssistantMessage.artifact.design]
+            : [];
+          if (suggestedProducts.length > 0) {
+            setSuggestedProducts(
+              suggestedProducts.map((design) => ({
+                id: design.id,
+                name: design.name,
+                image: design.images[0] || "",
+                price: 0, // Default price, could be enhanced
+                description: design.description,
+                tags: [], // Could be parsed from properties
+                category: "suggested",
+              }))
+            );
+          }
+        } else if (latestAssistantMessage.artifact.type === "recommendation") {
+          // Parse recommended products from artifact
+          const recommendedProducts =
+            latestAssistantMessage.artifact.products || [];
+          if (recommendedProducts.length > 0) {
+            // Download images for recommended products
+            const downloadPromises = recommendedProducts.flatMap((product) =>
+              product.images.map((imageId) => downloadImage(imageId))
+            );
+            Promise.all(downloadPromises)
+              .then((imageUrls) => {
+                let urlIndex = 0;
+                const productsWithImages = recommendedProducts.map(
+                  (product) => ({
+                    id: product.id,
+                    name: product.name,
+                    image: imageUrls[urlIndex] || "",
+                    imageUrl: imageUrls[urlIndex] || "",
+                    price: product.price || 0,
+                    description: product.description,
+                    tags: [], // Could be parsed from properties
+                    category: "recommended",
+                    isAIGenerated: true, // Allow customization like AI products
+                    aiDescription: product.description || "",
+                  })
+                );
+                urlIndex++;
+                setSuggestedProducts(productsWithImages);
+              })
+              .catch((error) => {
+                console.error(
+                  "Failed to download recommended product images:",
+                  error
+                );
+                // Fallback to products without images
+                setSuggestedProducts(
+                  recommendedProducts.map((product) => ({
+                    id: product.id,
+                    name: product.name,
+                    image: "", // No image available
+                    imageUrl: "", // No image available
+                    price: product.price || 0,
+                    description: product.description,
+                    tags: [],
+                    category: "recommended",
+                    isAIGenerated: true, // Allow customization like AI products
+                    aiDescription: product.description || "",
+                  }))
+                );
+              });
+          }
         }
       }
 
@@ -198,7 +251,19 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
         latestAssistantMessage.tool_calls.length > 1
       ) {
         console.log("Found tool_calls:", latestAssistantMessage.tool_calls);
-        const respondToolCall = latestAssistantMessage.tool_calls[1] as any;
+        const respondToolCall = latestAssistantMessage.tool_calls[1] as {
+          name: string;
+          arguments: {
+            artifact?: {
+              design?: {
+                id?: string;
+                name?: string;
+                description?: string;
+                images: string[];
+              };
+            };
+          };
+        };
         console.log("Respond tool call:", respondToolCall);
         if (
           respondToolCall?.name === "respond_to_user" &&
@@ -223,7 +288,7 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
             Promise.all(downloadPromises)
               .then((imageUrls) => {
                 console.log("Downloaded image URLs:", imageUrls);
-                const design = respondToolCall.arguments.artifact.design;
+                const design = respondToolCall.arguments.artifact!.design!;
                 const aiProducts: AIGeneratedProduct[] = imageUrls.map(
                   (imageUrl, index) => ({
                     id: `${design.id || `ai-${Date.now()}`}-${index}`,

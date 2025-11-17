@@ -8,10 +8,13 @@ import { useProductContext } from "@/lib/context/ProductContext";
 export default function PreorderPage() {
   const params = useParams();
   const productId = params.productId as string;
-  const { aiProducts, customizedImages } = useProductContext();
+  const { aiProducts, suggestedProducts, customizedImages } =
+    useProductContext();
 
-  // Find product directly from context
-  const product = aiProducts.find((p) => p.id === productId);
+  // Find product from AI products or suggested products
+  const product =
+    aiProducts.find((p) => p.id === productId) ||
+    suggestedProducts.find((p) => p.id === productId);
 
   // Get customized image if available
   const displayImage =

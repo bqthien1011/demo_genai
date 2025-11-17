@@ -30,6 +30,7 @@ export interface Artifact {
   id: string;
   type: string;
   design?: Design;
+  products?: RecommendedProduct[];
 }
 
 export interface Design {
@@ -38,8 +39,18 @@ export interface Design {
   description: string;
   properties: Record<string, string | number | boolean>;
   images: string[];
-  three_d_model: string;
+  three_d_model: string | null;
   reference_images: string[];
+}
+
+export interface RecommendedProduct {
+  id: string;
+  name: string;
+  description: string;
+  properties: Record<string, string | number | boolean | null>;
+  images: string[];
+  three_d_model: string | null;
+  price: number;
 }
 
 export interface CreateConversationRequest {
