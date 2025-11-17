@@ -127,3 +127,31 @@ export async function sendMessage(
 export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError;
 }
+
+// Download image function
+export async function downloadImage(imageId: string): Promise<string> {
+  try {
+    console.log("Calling download API for imageId:", imageId);
+    const response = await fetch("/api/download-image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ imageId }),
+    });
+
+    console.log("Download API response status:", response.status);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Download API error:", errorText);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Download API returned URL:", data.url);
+    return data.url;
+  } catch (error) {
+    console.error("Failed to download image:", error);
+    throw new ApiError("Failed to download image. Please try again.", 500);
+  }
+}

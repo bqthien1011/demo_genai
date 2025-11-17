@@ -269,16 +269,28 @@ export default function ProductList({
                           className="relative w-40 h-40 mb-4 flex items-center justify-center cursor-pointer"
                           onClick={() => handleImageClick(product.id)}
                         >
-                          <Image
-                            src={(product as any).imageUrl || product.image}
-                            alt={product.name}
-                            fill
-                            className="object-contain"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = "/placeholder.svg";
-                            }}
-                          />
+                          {product.isAIGenerated ? (
+                            <img
+                              src={(product as any).imageUrl || product.image}
+                              alt={product.name}
+                              className="w-full h-full object-contain"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = "/placeholder.svg";
+                              }}
+                            />
+                          ) : (
+                            <Image
+                              src={(product as any).imageUrl || product.image}
+                              alt={product.name}
+                              fill
+                              className="object-contain"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = "/placeholder.svg";
+                              }}
+                            />
+                          )}
                         </div>
                         <div className="text-center">
                           <p className="text-sm text-gray-600 mb-2">

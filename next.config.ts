@@ -2,7 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["cdn.pnj.io"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.pnj.io",
+      },
+    ],
   },
 };
 

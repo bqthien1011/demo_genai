@@ -17,6 +17,8 @@ import { chatTheme } from "@/lib/theme/chatbox";
 import { cn } from "@/lib/utils";
 import { useConversation } from "@/hooks/useConversation";
 import { useProductContext } from "@/lib/context/ProductContext";
+import { downloadImage } from "@/lib/services/chatApi";
+import { AIGeneratedProduct } from "@/lib/types/product";
 
 interface Message {
   id: string;
@@ -91,8 +93,12 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
   } = useConversation();
 
   // Use product context for suggestions
-  const { setSuggestedProducts, setIsLoading: setProductLoading } =
-    useProductContext();
+  const {
+    setSuggestedProducts,
+    setIsLoading: setProductLoading,
+    setAIMode,
+    setAIProducts,
+  } = useProductContext();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -120,6 +126,7 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
 
   // Sync API messages with display messages
   useEffect(() => {
+    console.log("API messages updated:", apiMessages.length);
     if (apiMessages.length > 0) {
       // Convert API messages to display format
       const displayMessages: Message[] = apiMessages.map(
@@ -156,6 +163,61 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
               category: "suggested",
             }))
           );
+        }
+      }
+
+      // Check for AI generated images in tool_calls
+      if (
+        latestAssistantMessage?.tool_calls &&
+        latestAssistantMessage.tool_calls.length > 1
+      ) {
+        console.log("Found tool_calls:", latestAssistantMessage.tool_calls);
+        const respondToolCall = latestAssistantMessage.tool_calls[1] as any;
+        console.log("Respond tool call:", respondToolCall);
+        if (
+          respondToolCall?.name === "respond_to_user" &&
+          respondToolCall.arguments?.artifact?.design?.images
+        ) {
+          console.log("Found artifact images:", respondToolCall.arguments.artifact.design.images);
+          const imageIds =
+            respondToolCall.arguments.artifact.design.images.filter(
+              (id: string) => id && id.trim() !== ""
+            );
+          console.log("Filtered image IDs:", imageIds);
+          if (imageIds.length > 0) {
+            console.log("Found image IDs:", imageIds);
+            // Download images and update AI products
+            const downloadPromises = imageIds.map((id: string) => {
+              console.log("Downloading image:", id);
+              return downloadImage(id);
+            });
+            Promise.all(downloadPromises)
+              .then((imageUrls) => {
+                console.log("Downloaded image URLs:", imageUrls);
+                const design = respondToolCall.arguments.artifact.design;
+                const aiProducts: AIGeneratedProduct[] = imageUrls.map(
+                  (imageUrl, index) => ({
+                    id: `${design.id || `ai-${Date.now()}`}-${index}`,
+                    name: design.name || "AI Generated Design",
+                    imageUrl: imageUrl,
+                    image: imageUrl,
+                    price: 0,
+                    description: design.description || "",
+                    tags: [],
+                    category: "ai-generated",
+                    isAIGenerated: true,
+                    aiDescription: design.description || "",
+                  })
+                );
+                console.log("Created AI products:", aiProducts);
+                // Set AI mode and products
+                setAIMode(true);
+                setAIProducts(aiProducts);
+              })
+              .catch((error) => {
+                console.error("Failed to download AI images:", error);
+              });
+          }
         }
       }
     }
