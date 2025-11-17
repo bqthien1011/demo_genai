@@ -36,7 +36,7 @@ export default function Home() {
             setSelectedProduct={setSelectedProduct}
             setChatBoxMinimized={setChatBoxMinimized}
           />
-          <RobotChatbot />
+          <RobotChatbot setChatBoxMinimized={setChatBoxMinimized} />
         </div>
         <div className="w-full md:w-1/2 h-full transition-all duration-300">
           {isCustomizing ? (

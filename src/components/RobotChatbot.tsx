@@ -1,13 +1,19 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { useProductContext } from "../lib/context/ProductContext";
 import { RobotAvatar } from "./RobotAvatar";
 import { SpeechBubble } from "./SpeechBubble";
 import { ChatbotButtons } from "./ChatbotButtons";
 import { aiProducts } from "../lib/data/aiProducts";
+import { useConversationContext } from "../lib/context/ConversationContext";
 
-export function RobotChatbot() {
+export function RobotChatbot({
+  setChatBoxMinimized,
+}: {
+  setChatBoxMinimized?: (minimized: boolean) => void;
+}) {
   const {
     chatbot,
     hideChatbot,
@@ -17,11 +23,43 @@ export function RobotChatbot() {
     setAIProducts,
   } = useProductContext();
 
-  const handleAgree = () => {
-    // Trigger AI mode and set AI-generated products
-    setAIMode(true);
-    setAIProducts(aiProducts);
-    hideChatbot();
+  const { sendUserMessage, isInitialized, isLoading } =
+    useConversationContext();
+
+  const [isSending, setIsSending] = useState(false);
+
+  const handleAgree = async () => {
+    if (isSending) return; // Prevent multiple clicks
+
+    // Wait for conversation to be initialized if not ready yet
+    if (!isInitialized) {
+      console.log("Waiting for conversation initialization...");
+      // Wait up to 2 seconds for initialization
+      for (let i = 0; i < 20; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        if (isInitialized) break;
+      }
+
+      if (!isInitialized) {
+        console.error("Conversation failed to initialize");
+        return;
+      }
+    }
+
+    setIsSending(true);
+    try {
+      // Open chat box if it's minimized
+      if (setChatBoxMinimized) {
+        setChatBoxMinimized(false);
+      }
+      // Send "tạo ảnh" message to chat AI
+      await sendUserMessage("tạo ảnh");
+      hideChatbot();
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleClose = () => {
@@ -67,7 +105,11 @@ export function RobotChatbot() {
                 className="flex flex-col space-y-2"
               >
                 <SpeechBubble message={chatbot.message} />
-                <ChatbotButtons onAgree={handleAgree} onClose={handleClose} />
+                <ChatbotButtons
+                  onAgree={handleAgree}
+                  onClose={handleClose}
+                  disabled={isSending}
+                />
               </motion.div>
             )}
           </AnimatePresence>

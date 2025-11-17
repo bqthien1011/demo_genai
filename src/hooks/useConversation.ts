@@ -82,6 +82,7 @@ export function useConversation(): UseConversationReturn {
 
   const sendUserMessage = useCallback(
     async (message: string, images?: string[], artifact?: Artifact) => {
+      console.log("sendUserMessage called with:", message);
       if (!conversationId) {
         setError("No active conversation. Please refresh the page.");
         return;
@@ -103,26 +104,36 @@ export function useConversation(): UseConversationReturn {
         meta: undefined,
       };
 
+      console.log("Adding temp user message:", userMessage);
       setMessages((prev) => [...prev, userMessage]);
 
       try {
+        // Get the artifact from the latest assistant message if available
+        const latestAssistantMessage = messages
+          .filter((msg) => msg.role === "assistant")
+          .slice(-1)[0];
+        const requestArtifact = latestAssistantMessage?.artifact || artifact;
+
         const request: SendMessageRequest = {
           conversation_id: conversationId,
           message,
           images,
-          artifact,
+          artifact: requestArtifact,
         };
 
         const response: ChatResponse = await sendMessage(request);
+        console.log("API response received:", response);
 
         // Replace temp user message with real one and add assistant message
         setMessages((prev) => {
           const filtered = prev.filter((msg) => msg.id !== userMessage.id);
-          return [
+          const newMessages = [
             ...filtered,
             response.user_message,
             response.assistant_message,
           ];
+          console.log("Updated messages:", newMessages);
+          return newMessages;
         });
       } catch (err) {
         console.error("Failed to send message:", err);
@@ -139,7 +150,7 @@ export function useConversation(): UseConversationReturn {
         setIsLoading(false);
       }
     },
-    [conversationId]
+    [conversationId, messages]
   );
 
   const clearError = useCallback(() => {

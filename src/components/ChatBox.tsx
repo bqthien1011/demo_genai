@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/carousel";
 import { chatTheme } from "@/lib/theme/chatbox";
 import { cn } from "@/lib/utils";
-import { useConversation } from "@/hooks/useConversation";
+import { useConversationContext } from "@/lib/context/ConversationContext";
 import { useProductContext } from "@/lib/context/ProductContext";
 import { downloadImage } from "@/lib/services/chatApi";
 import { AIGeneratedProduct } from "@/lib/types/product";
@@ -90,7 +90,7 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
     error,
     sendUserMessage,
     clearError,
-  } = useConversation();
+  } = useConversationContext();
 
   // Use product context for suggestions
   const {
@@ -126,20 +126,46 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
 
   // Sync API messages with display messages
   useEffect(() => {
-    console.log("API messages updated:", apiMessages.length);
+    console.log(
+      "ChatBox useEffect triggered, apiMessages:",
+      apiMessages.length,
+      apiMessages.map((m) => ({ id: m.id, content: m.content, role: m.role }))
+    );
     if (apiMessages.length > 0) {
-      // Convert API messages to display format
-      const displayMessages: Message[] = apiMessages.map(
-        (apiMsg: ApiMessage) => ({
-          id: apiMsg.id,
-          text: apiMsg.content,
-          isUser: apiMsg.role === "user",
-          image: apiMsg.images.length > 0 ? apiMsg.images[0] : undefined,
-        })
+      // Check if we have real messages (not just temp messages)
+      const hasRealMessages = apiMessages.some(
+        (msg) => !msg.id.startsWith("temp-")
       );
 
-      // Replace initial messages with API messages when we have them
-      setMessages(displayMessages);
+      if (hasRealMessages) {
+        // Convert API messages to display format
+        const displayMessages: Message[] = apiMessages.map(
+          (apiMsg: ApiMessage) => ({
+            id: apiMsg.id,
+            text: apiMsg.content,
+            isUser: apiMsg.role === "user",
+            image: apiMsg.images.length > 0 ? apiMsg.images[0] : undefined,
+          })
+        );
+        console.log("ChatBox setting REAL display messages:", displayMessages);
+
+        // Replace initial messages with API messages when we have real messages
+        setMessages(displayMessages);
+        console.log("ChatBox messages state updated to real messages");
+      } else {
+        // Just show temp messages along with initial messages
+        const tempMessages: Message[] = apiMessages.map(
+          (apiMsg: ApiMessage) => ({
+            id: apiMsg.id,
+            text: apiMsg.content,
+            isUser: apiMsg.role === "user",
+            image: apiMsg.images.length > 0 ? apiMsg.images[0] : undefined,
+          })
+        );
+        console.log("ChatBox showing TEMP messages:", tempMessages);
+        setMessages([...initialMessages, ...tempMessages]);
+        console.log("ChatBox messages state updated to include temp messages");
+      }
 
       // Check for product suggestions in the latest assistant message
       const latestAssistantMessage = apiMessages
@@ -224,7 +250,7 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
         }
       }
     }
-  }, [apiMessages, setSuggestedProducts]);
+  }, [apiMessages, setSuggestedProducts, setAIMode, setAIProducts]);
 
   // Show loading state
   useEffect(() => {
@@ -253,13 +279,17 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
     };
   }, []);
 
-  // Auto-resize textarea based on content
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [input]);
+  }, [messages, isTyping]);
+
+  // Show loading state
+  useEffect(() => {
+    setIsTyping(isLoading);
+  }, [isLoading]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -6,9 +6,14 @@ import { Button } from "./ui/button";
 interface ChatbotButtonsProps {
   onAgree: () => void;
   onClose: () => void;
+  disabled?: boolean;
 }
 
-export function ChatbotButtons({ onAgree, onClose }: ChatbotButtonsProps) {
+export function ChatbotButtons({
+  onAgree,
+  onClose,
+  disabled = false,
+}: ChatbotButtonsProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -18,8 +23,9 @@ export function ChatbotButtons({ onAgree, onClose }: ChatbotButtonsProps) {
     >
       <Button
         onClick={onAgree}
+        disabled={disabled}
         size="sm"
-        className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 rounded-full text-xs font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+        className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 rounded-full text-xs font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Đồng ý
       </Button>
