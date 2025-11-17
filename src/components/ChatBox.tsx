@@ -178,7 +178,10 @@ export default function ChatBox({ minimized }: { minimized?: boolean } = {}) {
           respondToolCall?.name === "respond_to_user" &&
           respondToolCall.arguments?.artifact?.design?.images
         ) {
-          console.log("Found artifact images:", respondToolCall.arguments.artifact.design.images);
+          console.log(
+            "Found artifact images:",
+            respondToolCall.arguments.artifact.design.images
+          );
           const imageIds =
             respondToolCall.arguments.artifact.design.images.filter(
               (id: string) => id && id.trim() !== ""
