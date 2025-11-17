@@ -217,7 +217,7 @@ export default function ProductList({
               ? "Mẫu sản phẩm do AI tạo"
               : isSuggestedMode
               ? "Sản phẩm được gợi ý"
-              : "Sản phẩm xem gần đây"}
+              : "Sản phẩm mới"}
           </h2>
           {isAIMode && (
             <div className="mb-4">
